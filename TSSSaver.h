@@ -9,5 +9,5 @@
 #import <Foundation/Foundation.h>
 
 @interface TSSSaver : NSObject
-+ (void)testSaveTSS;
++ (NSMutableURLRequest *)postRequest;
 @end

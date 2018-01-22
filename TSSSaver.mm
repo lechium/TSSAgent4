@@ -52,8 +52,10 @@ static NSString *CYDHex(NSData *data, bool reverse) {
     
     size_t length([data length]);
     uint8_t bytes[length];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [data getBytes:bytes];
-    
+#pragma clang diagnostic pop
     char string[length * 2 + 1];
     for (size_t i(0); i != length; ++i)
         sprintf(string + i * 2, "%.2x", bytes[reverse ? length - i - 1 : i]);
@@ -66,8 +68,10 @@ static NSString *CYDHex(NSData *data, bool reverse) {
 + (NSMutableURLRequest *)postRequest
 {
     NSString *ecid = HexToDec([CYDHex((NSData *) CYDIOGetValue("IODeviceTree:/chosen", @"unique-chip-id"), true) uppercaseString]);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSString *theString = [[NSString stringWithFormat:@"ecid=%@&boardConfig=%@&deviceID=%@", ecid, @"j42dap", @"AppleTV5,3"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
+#pragma clang diagnostic pop
     NSLog(@"sending string: %@", theString);
     
     NSData *postData = [theString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO]; //convert string to NSData that can be used as the HTTPBody of the POST
@@ -89,11 +93,13 @@ static NSString *CYDHex(NSData *data, bool reverse) {
 
 int main(int argc, char* argv[]) 
 {
-    TSSSaver *saver = [TSSSaver new];
     
-    NSMutableURLRequest *request = [saver postRequest];
+    NSMutableURLRequest *request = [TSSSaver postRequest];
     NSURLResponse *theResponse = nil;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&theResponse error:nil];
+#pragma clang diagnostic pop
     NSString *datString = [[NSString alloc] initWithData:returnData  encoding:NSUTF8StringEncoding];
     NSLog(@"datstring: %@", datString);
     return 0;
