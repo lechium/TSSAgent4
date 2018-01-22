@@ -65,12 +65,40 @@ static NSString *CYDHex(NSData *data, bool reverse) {
 
 @implementation TSSSaver
 
++ (NSString *)returnForProcess:(NSString *)call
+{
+    if (call==nil)
+        return 0;
+    char line[200];
+    NSLog(@"running process: %@", call);
+    FILE* fp = popen([call UTF8String], "r");
+    NSMutableArray *lines = [[NSMutableArray alloc]init];
+    if (fp)
+    {
+        while (fgets(line, sizeof line, fp))
+        {
+            NSString *s = [NSString stringWithCString:line encoding:NSUTF8StringEncoding];
+            s = [s stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            [lines addObject:s];
+        }
+    }
+    pclose(fp);
+    return [lines componentsJoinedByString:@"\n"];
+}
+
 + (NSMutableURLRequest *)postRequest
 {
+    NSString *device = [self returnForProcess:@"/bin/uname -m"];
+    NSString *boardConfig = [self returnForProcess:@"/bin/uname -i"];
+    NSLog(@"device: %@", device);
+    NSLog(@"boardConfig: %@", boardConfig);
+    if (device == nil) device = @"AppleTV5,3";
+    if (boardConfig == nil) boardConfig = @"j42dap";
+    
     NSString *ecid = HexToDec([CYDHex((NSData *) CYDIOGetValue("IODeviceTree:/chosen", @"unique-chip-id"), true) uppercaseString]);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSString *theString = [[NSString stringWithFormat:@"ecid=%@&boardConfig=%@&deviceID=%@", ecid, @"j42dap", @"AppleTV5,3"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *theString = [[NSString stringWithFormat:@"ecid=%@&boardConfig=%@&deviceID=%@", ecid, boardConfig, device] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 #pragma clang diagnostic pop
     NSLog(@"sending string: %@", theString);
     
