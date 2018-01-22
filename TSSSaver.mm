@@ -123,12 +123,16 @@ int main(int argc, char* argv[])
 {
     
     NSMutableURLRequest *request = [TSSSaver postRequest];
-    NSURLResponse *theResponse = nil;
+    NSHTTPURLResponse *theResponse = nil;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&theResponse error:nil];
 #pragma clang diagnostic pop
     NSString *datString = [[NSString alloc] initWithData:returnData  encoding:NSUTF8StringEncoding];
+    if ([theResponse respondsToSelector:@selector(statusCode)])
+    {
+        NSLog(@"returned with status code: %lu", [theResponse statusCode]);
+    }
     NSLog(@"datstring: %@", datString);
     return 0;
 }
