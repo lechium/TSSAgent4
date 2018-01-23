@@ -9,6 +9,8 @@
 #import "TSSSaver.h"
 #import "IOKit/IOKitLib.h"
 
+#define DLog(format, ...) CFShow((__bridge CFStringRef)[NSString stringWithFormat:format, ## __VA_ARGS__]);
+
 static NSString *HexToDec(NSString *hexValue)
 {
     if (hexValue == nil)
@@ -70,7 +72,7 @@ static NSString *CYDHex(NSData *data, bool reverse) {
     if (call==nil)
         return 0;
     char line[200];
-    NSLog(@"running process: %@", call);
+    //NSLog(@"running process: %@", call);
     FILE* fp = popen([call UTF8String], "r");
     NSMutableArray *lines = [[NSMutableArray alloc]init];
     if (fp)
@@ -88,19 +90,28 @@ static NSString *CYDHex(NSData *data, bool reverse) {
 
 + (NSMutableURLRequest *)postRequest
 {
-    NSString *device = [self returnForProcess:@"/bin/uname -m"];
-    NSString *boardConfig = [self returnForProcess:@"/bin/uname -i"];
-    NSLog(@"device: %@", device);
-    NSLog(@"boardConfig: %@", boardConfig);
+    NSString *unamePath = @"/usr/bin/uname";
+    NSFileManager *man = [NSFileManager defaultManager];
+    if (![man fileExistsAtPath:unamePath])
+    {
+        unamePath = @"/bin/uname";
+    }
+    
+    NSString *device = [self returnForProcess:[NSString stringWithFormat:@"%@ -m", unamePath]];
+    NSString *boardConfig = [self returnForProcess:[NSString stringWithFormat:@"%@ -i", unamePath]];
+  NSString *ecid = HexToDec([CYDHex((NSData *) CYDIOGetValue("IODeviceTree:/chosen", @"unique-chip-id"), true) uppercaseString]);
+    DLog(@"device: %@", device);
+    DLog(@"boardConfig: %@", boardConfig);
+    DLog(@"ecid: %@", ecid);
     if (device == nil) device = @"AppleTV5,3";
     if (boardConfig == nil) boardConfig = @"j42dap";
     
-    NSString *ecid = HexToDec([CYDHex((NSData *) CYDIOGetValue("IODeviceTree:/chosen", @"unique-chip-id"), true) uppercaseString]);
+  
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSString *theString = [[NSString stringWithFormat:@"ecid=%@&boardConfig=%@&deviceID=%@", ecid, boardConfig, device] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 #pragma clang diagnostic pop
-    NSLog(@"sending string: %@", theString);
+    //NSLog(@"sending string: %@", theString);
     
     NSData *postData = [theString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO]; //convert string to NSData that can be used as the HTTPBody of the POST
     
@@ -121,19 +132,20 @@ static NSString *CYDHex(NSData *data, bool reverse) {
 
 int main(int argc, char* argv[]) 
 {
-    
+    DLog(@"\nTSSAgent: Automatically save your SHSH2 APTicket blob's to 1conans server\n\n");
     NSMutableURLRequest *request = [TSSSaver postRequest];
     NSHTTPURLResponse *theResponse = nil;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&theResponse error:nil];
 #pragma clang diagnostic pop
-    NSString *datString = [[NSString alloc] initWithData:returnData  encoding:NSUTF8StringEncoding];
+    //NSString *datString = [[NSString alloc] initWithData:returnData  encoding:NSUTF8StringEncoding];
+    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:returnData  options:NSJSONReadingAllowFragments error:nil];
     if ([theResponse respondsToSelector:@selector(statusCode)])
     {
-        NSLog(@"returned with status code: %lu", [theResponse statusCode]);
+        DLog(@"returned with status code: %lu", [theResponse statusCode]);
     }
-    NSLog(@"datstring: %@", datString);
+    DLog(@"%@", jsonDict);
     return 0;
 }
 
