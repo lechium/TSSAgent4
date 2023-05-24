@@ -113,16 +113,23 @@ static NSString *CYDHex(NSData *data, bool reverse) {
 #pragma clang diagnostic pop
     //NSLog(@"sending string: %@", theString);
     
-    NSData *postData = [theString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO]; //convert string to NSData that can be used as the HTTPBody of the POST
+    NSDictionary *submitDict = @{@"boardConfig": boardConfig,
+                                 @"ecid": ecid,
+                                 @"deviceIdentifier": device};
+                                 
     
-    NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
+    //NSData *postData = [theString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO]; //convert string to NSData that can be used as the HTTPBody of the POST
+    NSData *postData = [NSJSONSerialization dataWithJSONObject:submitDict options:0 error:nil];
+    //NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setURL:[NSURL URLWithString:@"https://tsssaver.1conan.com/app.php"]];
+    //[request setURL:[NSURL URLWithString:@"https://tsssaver.1conan.com/app.php"]];
+    [request setURL:[NSURL URLWithString:@"https://tsssaver.1conan.com/v2/api/save.php"]];
     [request setHTTPMethod:@"POST"];
-    [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-    [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:@"InetURL/1.0" forHTTPHeaderField:@"User-Agent"];
+    //[request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+    //[request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    //[request setValue:@"InetURL/1.0" forHTTPHeaderField:@"User-Agent"];
+    [request setValue:@"TSSSaver-app/2.0" forHTTPHeaderField:@"User-Agent"];
     [request setHTTPBody:postData];
     return request;
 }

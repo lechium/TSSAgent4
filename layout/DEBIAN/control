@@ -3,8 +3,8 @@ Priority: Extra
 Name: tssagent
 Pre-Depends: cy+model.appletv
 Depends: firmware (>= 9.0)
-Version: 1.0
-Architecture: darwin-arm64
+Version: 1.0-3
+Architecture: appletvos-arm64
 Description: Save your APTicket SHSH2 blobs to 1conans server natively on tvOS
 Maintainer: Kevin Bradley
 Author: Kevin Bradley
