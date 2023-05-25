@@ -92,17 +92,17 @@ static NSString *CYDHex(NSData *data, bool reverse) {
 
 + (NSMutableURLRequest *)postRequest
 {
-    NSString *unamePath = @"/usr/bin/uname";
+    NSString *unamePath = @"uname";
     NSString *device = [KBTaskManager kb_task_returnForProcess:[NSString stringWithFormat:@"%@ -m", unamePath]];
     NSString *boardConfig = [KBTaskManager kb_task_returnForProcess:[NSString stringWithFormat:@"%@ -i", unamePath]];
-  NSString *ecid = HexToDec([CYDHex((NSData *) CYDIOGetValue("IODeviceTree:/chosen", @"unique-chip-id"), true) uppercaseString]);
+    NSString *ecid = HexToDec([CYDHex((NSData *) CYDIOGetValue("IODeviceTree:/chosen", @"unique-chip-id"), true) uppercaseString]);
     DLog(@"device: %@", device);
     DLog(@"boardConfig: %@", boardConfig);
     DLog(@"ecid: %@", ecid);
     if (device == nil) device = @"AppleTV5,3";
     if (boardConfig == nil) boardConfig = @"j42dap";
     
-  
+    
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSString *theString = [[NSString stringWithFormat:@"ecid=%@&boardConfig=%@&deviceID=%@", ecid, boardConfig, device] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -112,7 +112,7 @@ static NSString *CYDHex(NSData *data, bool reverse) {
     NSDictionary *submitDict = @{@"boardConfig": boardConfig,
                                  @"ecid": ecid,
                                  @"deviceIdentifier": device};
-                                 
+    
     
     //NSData *postData = [theString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO]; //convert string to NSData that can be used as the HTTPBody of the POST
     NSData *postData = [NSJSONSerialization dataWithJSONObject:submitDict options:0 error:nil];
