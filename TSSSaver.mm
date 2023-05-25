@@ -8,6 +8,8 @@
 
 #import "TSSSaver.h"
 #import "IOKit/IOKitLib.h"
+#include <sys/utsname.h>
+#import <libkbtask/KBTaskManager.h>
 
 #define DLog(format, ...) CFShow((__bridge CFStringRef)[NSString stringWithFormat:format, ## __VA_ARGS__]);
 
@@ -91,14 +93,8 @@ static NSString *CYDHex(NSData *data, bool reverse) {
 + (NSMutableURLRequest *)postRequest
 {
     NSString *unamePath = @"/usr/bin/uname";
-    NSFileManager *man = [NSFileManager defaultManager];
-    if (![man fileExistsAtPath:unamePath])
-    {
-        unamePath = @"/bin/uname";
-    }
-    
-    NSString *device = [self returnForProcess:[NSString stringWithFormat:@"%@ -m", unamePath]];
-    NSString *boardConfig = [self returnForProcess:[NSString stringWithFormat:@"%@ -i", unamePath]];
+    NSString *device = [KBTaskManager kb_task_returnForProcess:[NSString stringWithFormat:@"%@ -m", unamePath]];
+    NSString *boardConfig = [KBTaskManager kb_task_returnForProcess:[NSString stringWithFormat:@"%@ -i", unamePath]];
   NSString *ecid = HexToDec([CYDHex((NSData *) CYDIOGetValue("IODeviceTree:/chosen", @"unique-chip-id"), true) uppercaseString]);
     DLog(@"device: %@", device);
     DLog(@"boardConfig: %@", boardConfig);
@@ -111,7 +107,7 @@ static NSString *CYDHex(NSData *data, bool reverse) {
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSString *theString = [[NSString stringWithFormat:@"ecid=%@&boardConfig=%@&deviceID=%@", ecid, boardConfig, device] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 #pragma clang diagnostic pop
-    //NSLog(@"sending string: %@", theString);
+    NSLog(@"sending string: %@", theString);
     
     NSDictionary *submitDict = @{@"boardConfig": boardConfig,
                                  @"ecid": ecid,

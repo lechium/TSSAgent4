@@ -6,7 +6,7 @@
 	<string>com.nito.tssagent</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/usr/bin/TSSAgent</string>
+		<string>/fs/jb/usr/bin/TSSAgent</string>
 	</array>
 	<key>StartInterval</key>
 	<integer>2592000</integer>
@@ -17,8 +17,8 @@
 	<key>KeepAlive</key>
 	<false/>
 	<key>StandardErrorPath</key>
-	<string>/Library/Logs/TSSAgent.log</string>
+	<string>/var/mobile/Library/Logs/TSSAgent.log</string>
 	<key>StandardOutPath</key>
-	<string>/Library/Logs/TSSAgent.log</string>
+	<string>/var/mobile/Library/Logs/TSSAgent.log</string>
 </dict>
 </plist>
