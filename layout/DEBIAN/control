@@ -2,8 +2,8 @@ Package: com.nito.tssagent
 Priority: Extra
 Name: tssagent
 Pre-Depends: cy+model.appletv
-Depends: firmware (>= 9.0)
-Version: 1.0-3
+Depends: firmware (>= 9.0), com.nito.kbtask
+Version: 1.1-1
 Architecture: appletvos-arm64
 Description: Save your APTicket SHSH2 blobs to 1conans server natively on tvOS
 Maintainer: Kevin Bradley

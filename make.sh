@@ -9,5 +9,5 @@ ldid -Sent.plist ecid
 #jtool --sign platform --ent ent.plist --inplace TSSAgent
 #jtool --sign platform --ent ent.plist --inplace ecid
 cp ecid TSSAgent layout/fs/jb/usr/bin/
-dpkg-deb -b layout com.nito.tssagent_1.0-3-appletvos-arm64.deb
+dpkg-deb -b layout com.nito.tssagent_1.1-1-appletvos-arm64.deb
 
