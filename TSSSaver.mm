@@ -10,6 +10,8 @@
 #import "IOKit/IOKitLib.h"
 #include <sys/utsname.h>
 #import <libkbtask/KBTaskManager.h>
+#import "NSURLRequest+cURL.h"
+#import "NSURLRequest+IgnoreSSL.h"
 
 #define DLog(format, ...) CFShow((__bridge CFStringRef)[NSString stringWithFormat:format, ## __VA_ARGS__]);
 
