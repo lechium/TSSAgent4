@@ -109,7 +109,7 @@ static NSString *CYDHex(NSData *data, bool reverse) {
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSString *theString = [[NSString stringWithFormat:@"ecid=%@&boardConfig=%@&deviceID=%@", ecid, boardConfig, device] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 #pragma clang diagnostic pop
-    NSLog(@"sending string: %@", theString);
+    //DLog(@"sending string: %@", theString);
     
     NSDictionary *submitDict = @{@"boardConfig": boardConfig,
                                  @"ecid": ecid,
@@ -145,13 +145,17 @@ int main(int argc, char* argv[])
     NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&theResponse error:nil];
 #pragma clang diagnostic pop
     //NSString *datString = [[NSString alloc] initWithData:returnData  encoding:NSUTF8StringEncoding];
-    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:returnData  options:NSJSONReadingAllowFragments error:nil];
-    if ([theResponse respondsToSelector:@selector(statusCode)])
-    {
+    if ([theResponse respondsToSelector:@selector(statusCode)]) {
         DLog(@"returned with status code: %lu", [theResponse statusCode]);
     }
-    DLog(@"%@", jsonDict);
-    return 0;
+    if (returnData) {
+        NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:returnData  options:NSJSONReadingAllowFragments error:nil];
+        DLog(@"%@", jsonDict);
+        return 0;
+    } else {
+        DLog(@"No data returned from the server!\n");
+    }
+    return -1;
 }
 
 

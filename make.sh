@@ -10,5 +10,5 @@ ldid -Sent.plist ecid
 #jtool --sign platform --ent ent.plist --inplace ecid
 cp ecid TSSAgent layout/fs/jb/usr/bin/
 find layout -name .DS_Store | xargs rm -f
-dpkg-deb -b layout com.nito.tssagent_1.1-1-appletvos-arm64.deb
+dpkg-deb -b layout com.nito.tssagent_1.1-2-appletvos-arm64.deb
 
